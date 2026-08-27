@@ -828,114 +828,145 @@ def list_labels(helper_only: bool = True) -> str:
 
 
 # ── Tools：產出層（衛教單的終點是印出來，不是螢幕）──
-WORKSHEET_HTML = """<title>{title}</title>
+WORKSHEET_HTML = """<title>%%TITLE%%</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 /* ── 這份骨架同時要滿足兩件事：線上分享看得舒服、按 Ctrl+P 印出來能用 ──
    踩過的坑都寫在對應的地方。 */
-:root{{
+:root{
   --ink:#1a1a1a; --ink-2:#444; --ink-3:#767676;
-  --line:#d8d8d8; --accent:{accent}; --accent-soft:{accent_soft};
+  --line:#d8d8d8; --accent:%%ACCENT%%; --accent-soft:%%ACCENT_SOFT%%;
   --paper:#ffffff;
-}}
-*{{box-sizing:border-box}}
-body{{
+}
+*{box-sizing:border-box}
+body{
   margin:0; background:#eceae5; color:var(--ink);
   font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   line-height:1.85; font-size:16px;
-}}
+}
 /* A4 內文區。螢幕上像一張紙，列印時就是那張紙。 */
-.sheet{{
+.sheet{
   /* 寫死 210mm 的話手機會爆版（橫向捲動），所以取兩者較小值。
      列印時 @media print 會把它還原成真正的 A4。 */
   width:min(210mm, 100%); min-height:297mm; margin:1.5rem auto;
   padding:16mm 15mm;
   background:var(--paper); box-shadow:0 2px 18px rgba(0,0,0,.12);
-}}
-header{{border-bottom:3px solid var(--accent); padding-bottom:.8rem; margin-bottom:1.4rem}}
-.eyebrow{{font-size:.8rem; letter-spacing:.14em; color:var(--accent);
-  font-weight:700; margin:0 0 .35rem}}
-h1{{font-size:1.7rem; line-height:1.35; margin:0; letter-spacing:-.01em}}
-.forwho{{font-size:.9rem; color:var(--ink-3); margin:.5rem 0 0}}
-h2{{font-size:1.15rem; margin:1.8rem 0 .7rem; padding-left:.6rem;
-  border-left:4px solid var(--accent)}}
-p{{margin:0 0 .8rem; max-width:38em}}
-ul,ol{{margin:0 0 1rem; padding-left:1.4rem}}
-li{{margin-bottom:.45rem}}
+}
+header{border-bottom:3px solid var(--accent); padding-bottom:.8rem; margin-bottom:1.4rem}
+.eyebrow{font-size:.8rem; letter-spacing:.14em; color:var(--accent);
+  font-weight:700; margin:0 0 .35rem}
+h1{font-size:1.7rem; line-height:1.35; margin:0; letter-spacing:-.01em}
+.forwho{font-size:.9rem; color:var(--ink-3); margin:.5rem 0 0}
+h2{font-size:1.15rem; margin:1.8rem 0 .7rem; padding-left:.6rem;
+  border-left:4px solid var(--accent)}
+p{margin:0 0 .8rem; max-width:38em}
+ul,ol{margin:0 0 1rem; padding-left:1.4rem}
+li{margin-bottom:.45rem}
 /* 圖文並排。圖是輔助，不要喧賓奪主。 */
-.row{{display:flex; gap:1.2rem; align-items:flex-start; margin:1rem 0;
-  flex-wrap:wrap}}
-.row img{{width:110px; flex:0 0 110px; height:auto}}
-.row .txt{{flex:1 1 14rem; min-width:0}}
-.box{{background:var(--accent-soft); border-left:4px solid var(--accent);
-  padding:1rem 1.2rem; margin:1.2rem 0; border-radius:0 3px 3px 0}}
-.box p:last-child{{margin-bottom:0}}
-.check{{list-style:none; padding:0}}
-.check li{{padding-left:2rem; position:relative; margin-bottom:.7rem}}
-.check li::before{{content:""; position:absolute; left:0; top:.35em;
-  width:1.1rem; height:1.1rem; border:2px solid var(--ink-3); border-radius:2px}}
-footer{{margin-top:2rem; padding-top:.9rem; border-top:1px solid var(--line);
-  font-size:.78rem; color:var(--ink-3); line-height:1.7}}
-.bar{{
+.row{display:flex; gap:1.2rem; align-items:flex-start; margin:1rem 0;
+  flex-wrap:wrap}
+.row img{width:110px; flex:0 0 110px; height:auto}
+.row .txt{flex:1 1 14rem; min-width:0}
+.box{background:var(--accent-soft); border-left:4px solid var(--accent);
+  padding:1rem 1.2rem; margin:1.2rem 0; border-radius:0 3px 3px 0}
+.box p:last-child{margin-bottom:0}
+.check{list-style:none; padding:0}
+.check li{padding-left:2rem; position:relative; margin-bottom:.7rem}
+.check li::before{content:""; position:absolute; left:0; top:.35em;
+  width:1.1rem; height:1.1rem; border:2px solid var(--ink-3); border-radius:2px}
+footer{margin-top:2rem; padding-top:.9rem; border-top:1px solid var(--line);
+  font-size:.78rem; color:var(--ink-3); line-height:1.7}
+.bar{
   position:sticky; top:0; z-index:10; background:#fff; border-bottom:1px solid var(--line);
   padding:.6rem 1rem; display:flex; gap:.7rem; align-items:center; justify-content:center;
   font-size:.85rem;
-}}
-.bar button{{
+}
+.bar button{
   font:inherit; font-weight:700; padding:.4rem 1rem; border:1px solid var(--accent);
   background:var(--accent); color:#fff; border-radius:3px; cursor:pointer;
-}}
-.bar span{{color:var(--ink-3)}}
+}
+.bar span{color:var(--ink-3)}
+.bar kbd{
+  font-family:ui-monospace,Consolas,monospace; font-size:.78em;
+  background:#f0efec; border:1px solid var(--line); border-bottom-width:2px;
+  border-radius:3px; padding:.05rem .3rem;
+}
+.bar-note{color:var(--accent); font-weight:700; max-width:30rem; line-height:1.5}
 
 /* ── 手機（個案很可能就是在手機上看這一份）──
    桌機的 16mm 邊界在 5 吋螢幕上等於整頁只剩中間一條，
    所以窄螢幕改用相對邊界，圖也放大置中，不要縮在角落。 */
-@media (max-width:600px){{
-  body{{background:#fff; font-size:17px}}
-  .sheet{{margin:0; padding:1.2rem 1.1rem 2rem; box-shadow:none; min-height:0}}
-  h1{{font-size:1.42rem}}
-  h2{{font-size:1.08rem; margin-top:1.5rem}}
-  .row{{gap:.9rem}}
-  .row img{{width:82px; flex:0 0 82px}}
-  .box{{padding:.9rem 1rem}}
-  .bar{{font-size:.8rem; padding:.5rem .7rem}}
-  .bar span{{display:none}}   /* 手機上不會有人按 Ctrl+P */
-}}
+@media (max-width:600px){
+  body{background:#fff; font-size:17px}
+  .sheet{margin:0; padding:1.2rem 1.1rem 2rem; box-shadow:none; min-height:0}
+  h1{font-size:1.42rem}
+  h2{font-size:1.08rem; margin-top:1.5rem}
+  .row{gap:.9rem}
+  .row img{width:82px; flex:0 0 82px}
+  .box{padding:.9rem 1rem}
+  .bar{font-size:.8rem; padding:.5rem .7rem}
+  .bar{flex-wrap:wrap}
+  .bar .kbd-hint{display:none}   /* 手機沒有 Ctrl+P，講了只會混淆 */
+}
 /* 更窄（或圖需要看清楚時）：圖獨立一行、放大置中 */
-@media (max-width:400px){{
-  .row{{flex-direction:column; align-items:center; text-align:left}}
-  .row img{{width:132px; flex:none; align-self:center}}
-}}
+@media (max-width:400px){
+  .row{flex-direction:column; align-items:center; text-align:left}
+  .row img{width:132px; flex:none; align-self:center}
+}
 
 /* ── 列印 ──
    坑一：不加 @page，瀏覽器預設邊界會把版面擠掉。
    坑二：sticky 工具列會跟著印出來。
    坑三：圖被切在兩頁中間。
    坑四：深色底在雷射印表機上吃碳粉、家長看不清楚。 */
-@page{{ size:A4; margin:14mm; }}
-@media print{{
-  body{{background:#fff; font-size:12pt}}
-  .sheet{{width:auto; max-width:none; min-height:0; margin:0; padding:0;
-          box-shadow:none}}
-  .bar{{display:none}}
-  .row, .box, h2, img, li{{break-inside:avoid; page-break-inside:avoid}}
-  h2{{break-after:avoid; page-break-after:avoid}}
-  a{{color:inherit; text-decoration:none}}
+@page{ size:A4; margin:14mm; }
+@media print{
+  body{background:#fff; font-size:12pt}
+  .sheet{width:auto; max-width:none; min-height:0; margin:0; padding:0;
+          box-shadow:none}
+  .bar{display:none}
+  .row, .box, h2, img, li{break-inside:avoid; page-break-inside:avoid}
+  h2{break-after:avoid; page-break-after:avoid}
+  a{color:inherit; text-decoration:none}
   /* 網址印出來，家長看紙本才知道去哪 */
-  footer a::after{{content:" (" attr(href) ")"; font-size:.9em; color:#666}}
-}}
+  footer a::after{content:" (" attr(href) ")"; font-size:.9em; color:#666}
+}
 </style>
 
 <div class="bar">
-  <button type="button" onclick="window.print()">列印這一份</button>
-  <span>或按 Ctrl+P　·　列印時這一列不會出現</span>
+  <button type="button" id="btnPrint">列印這一份</button>
+  <span class="kbd-hint">或直接按 <kbd>Ctrl</kbd>+<kbd>P</kbd>（Mac：<kbd>⌘</kbd>+<kbd>P</kbd>）</span>
+  <span class="bar-note" id="printNote" hidden></span>
 </div>
+<script>
+/* 🔴 這顆按鈕在 Artifact 頁面上會「安靜地失效」。
+   原因：Artifact 跑在 sandbox 的 iframe 裡，腳本觸發的 window.print()
+   會被擋掉，而且**不會拋錯**——按下去什麼都不發生，使用者只會以為壞了。
+   使用者自己按 Ctrl+P 是瀏覽器原生行為，擋不住，所以那條路一定通。
+   這裡的作法：照樣試 print()，然後不管成不成功都把備案講清楚。 */
+(function(){
+  var b = document.getElementById('btnPrint');
+  var note = document.getElementById('printNote');
+  if(!b) return;
+  var inFrame = (function(){ try { return window.self !== window.top; } catch(e){ return true; } })();
+  b.addEventListener('click', function(){
+    var ok = false;
+    try { window.print(); ok = true; } catch(e){}
+    if (!note) return;
+    note.hidden = false;
+    note.textContent = inFrame
+      ? '沒跳出列印視窗？這一頁嵌在框架裡，瀏覽器會擋掉按鈕觸發的列印——請直接按 Ctrl+P。'
+      : (ok ? '' : '瀏覽器擋掉了，請直接按 Ctrl+P。');
+    if (!note.textContent) note.hidden = true;
+  });
+})();
+</script>
 
 <div class="sheet">
   <header>
-    <p class="eyebrow">{eyebrow}</p>
-    <h1>{title}</h1>
-    <p class="forwho">{forwho}</p>
+    <p class="eyebrow">%%EYEBROW%%</p>
+    <h1>%%TITLE%%</h1>
+    <p class="forwho">%%FORWHO%%</p>
   </header>
 
   <!-- ↓↓↓ 以下是範例結構，直接改成你的內容 ↓↓↓ -->
@@ -969,7 +1000,7 @@ footer{{margin-top:2rem; padding-top:.9rem; border-top:1px solid var(--line);
   <!-- ↑↑↑ 以上是範例結構 ↑↑↑ -->
 
   <footer>
-    {footer}<br>
+    %%FOOTER%%<br>
     插圖來源：<a href="https://www.irasutoya.com">いらすとや</a>（免費素材，本份使用數量在授權範圍內）
   </footer>
 </div>
@@ -993,6 +1024,8 @@ def worksheet_template(out_path: str,
       · 圖片與段落 break-inside:avoid（不會被切在兩頁中間）
       · 列印時轉成白底（深色底吃碳粉，家長也看不清楚）
       · 頁尾的連結列印時會把網址一起印出來（紙本才知道去哪）
+      · 「列印」按鈕在 Artifact 裡會被 sandbox 擋掉（而且不報錯），
+        所以骨架裡常駐一行 Ctrl+P 的提示，按下去也會再講一次
 
     產生之後的流程：
       1. 這支產生骨架
@@ -1028,9 +1061,13 @@ def worksheet_template(out_path: str,
         except Exception:
             return "#eef4f2"
 
-    html = WORKSHEET_HTML.format(
-        title=title, eyebrow=eyebrow, forwho=forwho, footer=footer,
-        accent=accent, accent_soft=soft(accent))
+    # 用替換而不是 .format() —— 模板裡的 CSS/JS 有大量 { }，
+    # 用 .format() 就得全部寫成 {{ }}，加一段新的 JS 忘了跳脫就會整支炸掉。
+    html = WORKSHEET_HTML
+    for k, v in (("%%TITLE%%", title), ("%%EYEBROW%%", eyebrow),
+                 ("%%FORWHO%%", forwho), ("%%FOOTER%%", footer),
+                 ("%%ACCENT%%", accent), ("%%ACCENT_SOFT%%", soft(accent))):
+        html = html.replace(k, v)
 
     d = os.path.dirname(os.path.abspath(out_path))
     if d and not os.path.isdir(d):
