@@ -42,7 +42,7 @@ Artifact 有嚴格的 CSP，會擋掉所有外部主機的圖片（唯一例外�
 - 一份衛教單用 3–8 張，遠在額度內，不用擔心
 - **「同一件作品」的意思是同一份文件**，不是同一次對話
 - 治療所自己印給個案 → 一般不算商用；但**拿去賣的教材、收費課程的講義算**
-- 不確定就跑 `license_check()`，它會把原文條款一起回給你
+- 不確定就跑 `license_check(count=張數)`（**這支要帶張數**），它會算給你還剩幾張、並附上原文條款
 
 ### ③ 不要把插圖當成臨床素材
 
@@ -56,7 +56,7 @@ Artifact 有嚴格的 CSP，會擋掉所有外部主機的圖片（唯一例外�
 いらすとや 是日文站，圖也是日文標的。使用者想找「深呼吸」，
 站上叫「深呼吸をする人のイラスト」；想找「情緒」，站上是「感情」。
 
-`search()` 內建 167 組中日對照詞，你打中文它自己翻成日文去查。
+`search(query=…)` 內建 167 組中日對照詞，你打中文它自己翻成日文去查。
 使用者不必知道這件事，**也不要在回答裡炫耀這個過程**，直接給圖就好。
 
 真的要用日文原詞精準查，才用 `search_ja()`。
@@ -67,16 +67,22 @@ Artifact 有嚴格的 CSP，會擋掉所有外部主機的圖片（唯一例外�
 
 | 使用者說 | 用這支 |
 |---|---|
-| 「找幾張放鬆的圖」「有沒有深呼吸的插圖」 | `search("放鬆")` |
-| 「用日文原詞查」「查 ストレス」 | `search_ja("ストレス")` |
+| 「找幾張放鬆的圖」「有沒有深呼吸的插圖」 | `search(query="放鬆")` |
+| 「用日文原詞查」「查 ストレス」 | `search_ja(query_ja="ストレス")` |
 | 「有哪些主題可以挑」 | `list_topics()` |
-| 「這個分類還有什麼」 | `browse_label(...)` |
-| 「我要做一份給個案的衛教單，配幾張圖」 | `suggest_for_worksheet(...)` |
-| 「可以印出來發嗎」「授權怎麼算」 | `license_check()` |
+| 「這個分類還有什麼」 | `browse_label(label_ja=…)` |
+| 「我要做一份給個案的衛教單，配幾張圖」 | `suggest_for_worksheet(situation=…)` |
+| 「可以印出來發嗎」「授權怎麼算」 | `license_check(count=張數)` |
 | **「做成 Artifact」「做成網頁」** | 先做 HTML → **`inline_images()`** → 才發布 |
 | 「這個圖庫有多大」「有幾張」 | `library_stats()` |
 | 「所有標籤列一下」 | `list_labels()` |
-| 「給我一份可以直接印的 A4」 | `worksheet_template(...)` |
+| 「給我一份可以直接印的 A4」 | `worksheet_template(out_path=…)` |
+
+> **參數名一律照這裡寫**（2026-08-27 對 server.py 實測過）：
+> `search(query)` · `search_ja(query_ja)` · `browse_label(label_ja)` ·
+> `suggest_for_worksheet(situation)` · `license_check(count)` ·
+> `inline_images(html_path)` · `worksheet_template(out_path)`。
+> `list_topics()` · `library_stats()` · `list_labels()` 不用帶參數。
 
 ---
 
@@ -84,7 +90,7 @@ Artifact 有嚴格的 CSP，會擋掉所有外部主機的圖片（唯一例外�
 
 使用者要的通常是「**一張紙，直接印出來給個案帶走**」。
 
-1. 用 `worksheet_template()` 起版，它已經處理好 A4 尺寸與列印邊界
+1. 用 `worksheet_template(out_path=…)` 起版，它已經處理好 A4 尺寸與列印邊界
 2. 配圖 3–8 張，用 `suggest_for_worksheet()` 挑，別自己硬湊
 3. **發布前跑 `inline_images()`**（見硬規矩①）
 4. 手機上也要能讀 —— 模板已經是 `width:min(210mm, 100%)`，不要自己改死寬度
